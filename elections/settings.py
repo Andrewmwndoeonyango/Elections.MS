@@ -33,7 +33,11 @@ if _allowed_hosts:
                      for host in _allowed_hosts.split(',') if host.strip()]
 else:
     # Local development defaults to avoid DisallowedHost 400 errors.
-    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+    ALLOWED_HOSTS = [
+        '127.0.0.1',
+        'localhost',
+        'elections-managementsystem-boc3rslkk-andrew-onyangos-projects.vercel.app',
+    ]
 
 
 # Application definition
