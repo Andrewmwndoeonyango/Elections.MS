@@ -57,7 +57,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Position-wise Results</h5>
+                    <h5 class="mb-0">Position-wise Results and Candidate Locations</h5>
                 </div>
                 <div class="card-body">
                     {% for stat in position_stats %}
@@ -83,23 +83,42 @@
                             
                             {% if stat.top_candidates %}
                                 {% for candidate_stat in stat.top_candidates %}
-                                    <div class="row align-items-center mb-2">
+                                    <div class="row align-items-center mb-2 py-2 border-bottom">
                                         <div class="col-md-6">
                                             <div class="d-flex align-items-center">
                                                 {% if candidate_stat.candidate.photo and candidate_stat.candidate.photo.url %}
                                                     <img src="{{ candidate_stat.candidate.photo.url }}" 
                                                          alt="{{ candidate_stat.candidate.first_name }}"
                                                          class="rounded-circle me-2"
-                                                         style="width: 30px; height: 30px; object-fit: cover;">
+                                                         style="width: 44px; height: 44px; object-fit: cover;">
                                                 {% else %}
                                                     <img src="https://picsum.photos/seed/{{ candidate_stat.candidate.id }}/30/30.jpg" 
                                                          alt="{{ candidate_stat.candidate.first_name }}"
                                                          class="rounded-circle me-2"
-                                                         style="width: 30px; height: 30px; object-fit: cover;">
+                                                         style="width: 44px; height: 44px; object-fit: cover;">
                                                 {% endif %}
                                                 <div>
                                                     <strong>{{ candidate_stat.candidate.first_name }} {{ candidate_stat.candidate.last_name }}</strong>
                                                     <br><small class="text-muted">{{ candidate_stat.candidate.party.name }}</small>
+                                                    {% if stat.position.name == 'PRESIDENT' %}
+                                                        <div class="mt-1"><span class="badge bg-dark">National</span></div>
+                                                        <div class="small text-muted mt-1">Scope: National (All Counties, Constituencies, and Wards)</div>
+                                                    {% elif stat.position.name == 'GOVERNOR' or stat.position.name == 'SENATOR' or stat.position.name == 'WOMEN_REP' %}
+                                                        <div class="mt-1"><span class="badge bg-primary">County Level</span></div>
+                                                        <div class="small text-muted mt-1">County: {{ candidate_stat.candidate.county.name|default:"Not Assigned" }}</div>
+                                                        <div class="small text-muted">Constituency: All in selected county</div>
+                                                        <div class="small text-muted">Ward: All in selected county</div>
+                                                    {% elif stat.position.name == 'MP' %}
+                                                        <div class="mt-1"><span class="badge bg-info text-dark">Constituency Level</span></div>
+                                                        <div class="small text-muted mt-1">County: {{ candidate_stat.candidate.county.name|default:"Not Assigned" }}</div>
+                                                        <div class="small text-muted">Constituency: {{ candidate_stat.candidate.constituency.name|default:"Not Assigned" }}</div>
+                                                        <div class="small text-muted">Ward: All in selected constituency</div>
+                                                    {% else %}
+                                                        <div class="mt-1"><span class="badge bg-success">Ward Level</span></div>
+                                                        <div class="small text-muted mt-1">County: {{ candidate_stat.candidate.county.name|default:"Not Assigned" }}</div>
+                                                        <div class="small text-muted">Constituency: {{ candidate_stat.candidate.constituency.name|default:"Not Assigned" }}</div>
+                                                        <div class="small text-muted">Ward: {{ candidate_stat.candidate.ward.name|default:"Not Assigned" }}</div>
+                                                    {% endif %}
                                                 </div>
                                             </div>
                                         </div>

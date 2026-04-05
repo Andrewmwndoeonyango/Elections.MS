@@ -456,20 +456,21 @@ def voter_statistics(request):
         candidates_for_position = Candidate.objects.filter(
             position=position).count()
 
-        # Get top candidates for this position
+        # Get candidates for this position
         top_candidates = []
-        candidates = Candidate.objects.filter(position=position)
+        candidates = Candidate.objects.filter(position=position).select_related(
+            'party', 'county', 'constituency', 'ward'
+        )
 
         for candidate in candidates:
             vote_count = Vote.objects.filter(candidate=candidate).count()
-            if vote_count > 0:
-                percentage = (vote_count / votes_for_position *
-                              100) if votes_for_position > 0 else 0
-                top_candidates.append({
-                    'candidate': candidate,
-                    'vote_count': vote_count,
-                    'percentage': round(percentage, 1)
-                })
+            percentage = (vote_count / votes_for_position *
+                          100) if votes_for_position > 0 else 0
+            top_candidates.append({
+                'candidate': candidate,
+                'vote_count': vote_count,
+                'percentage': round(percentage, 1)
+            })
 
         # Sort by vote count
         top_candidates.sort(key=lambda x: x['vote_count'], reverse=True)
@@ -478,7 +479,7 @@ def voter_statistics(request):
             'position': position,
             'total_votes': votes_for_position,
             'candidates_count': candidates_for_position,
-            'top_candidates': top_candidates[:5]  # Top 5 candidates
+            'top_candidates': top_candidates
         })
 
     # Get voter's voting history
