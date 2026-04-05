@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voter Education - Kenya Election Management System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #f1f8ff 0%, #dff0ff 100%);
+            color: #1f2937;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        .hero {
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 28px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+        }
+        .hero h1 {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            color: #0b4f8a;
+        }
+        .hero p {
+            color: #4b5563;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+        .card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+            border-left: 5px solid #0984e3;
+        }
+        .card h2 {
+            font-size: 1.15rem;
+            margin-bottom: 10px;
+            color: #0b4f8a;
+        }
+        ul {
+            margin-left: 18px;
+        }
+        .checklist {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 22px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+            margin-bottom: 24px;
+        }
+        .checklist h2 {
+            color: #0b4f8a;
+            margin-bottom: 10px;
+        }
+        .actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .actions a {
+            text-decoration: none;
+            background: #0984e3;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 999px;
+            font-weight: bold;
+        }
+        .actions a.secondary {
+            background: #1f2937;
+        }
+        .notice {
+            margin-top: 14px;
+            color: #374151;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <section class="hero">
+            <h1>Voter Education Center</h1>
+            <p>Understand every step before election day: registration, verification, voting process, and your rights.</p>
+        </section>
+
+        <section class="grid">
+            <article class="card">
+                <h2>1) Registration & Verification</h2>
+                <ul>
+                    <li>Register with your correct ID number and location details.</li>
+                    <li>Complete OTP verification to activate your voter account.</li>
+                    <li>Use your verified account to access your voting dashboard.</li>
+                </ul>
+            </article>
+
+            <article class="card">
+                <h2>2) Positions You Vote For</h2>
+                <ul>
+                    <li>President (national ballot).</li>
+                    <li>Governor, Senator, Women Representative (county ballot).</li>
+                    <li>Member of Parliament (constituency ballot).</li>
+                    <li>MCA (ward ballot).</li>
+                </ul>
+            </article>
+
+            <article class="card">
+                <h2>3) How Voting Works Here</h2>
+                <ul>
+                    <li>Select a position from your dashboard.</li>
+                    <li>Review candidate details before making a choice.</li>
+                    <li>Confirm your vote on the confirmation page.</li>
+                    <li>Each position can only be voted once.</li>
+                </ul>
+            </article>
+
+            <article class="card">
+                <h2>4) Voter Rights & Good Practice</h2>
+                <ul>
+                    <li>Your vote is secret and should never be disclosed under pressure.</li>
+                    <li>Do not share your login credentials or OTP code.</li>
+                    <li>Confirm candidate name and party carefully before final submission.</li>
+                    <li>Report suspicious activity to election officials immediately.</li>
+                </ul>
+            </article>
+        </section>
+
+        <section class="checklist">
+            <h2>Election Day Checklist</h2>
+            <ul>
+                <li>Ensure your account is verified before election day.</li>
+                <li>Log in early and review each ballot position carefully.</li>
+                <li>Vote once per position and verify your final confirmation message.</li>
+                <li>Keep your phone available in case any verification step is needed.</li>
+            </ul>
+            <p class="notice">This guide is for voter awareness inside the system and does not replace official IEBC legal notices.</p>
+        </section>
+
+        <div class="actions">
+            <a href="/register/">Register</a>
+            <a href="/login/">Login</a>
+            <a href="/dashboard/" class="secondary">Open Dashboard</a>
+            <a href="/voter/" class="secondary">Back to Voter Portal</a>
+        </div>
+    </div>
+</body>
+</html>

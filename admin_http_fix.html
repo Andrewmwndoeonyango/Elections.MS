@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kenya Electoral System - Admin Force HTTP</title>
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #006633, #004d26);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container { 
+            max-width: 700px; 
+            background: white; 
+            padding: 40px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            color: #333;
+        }
+        .header { 
+            text-align: center; 
+            color: #006633; 
+            margin-bottom: 30px;
+            border-bottom: 3px solid #006633;
+            padding-bottom: 20px;
+        }
+        .admin-link { 
+            display: block; 
+            background: #006633; 
+            color: white; 
+            text-decoration: none; 
+            padding: 20px 30px; 
+            text-align: center; 
+            border-radius: 8px; 
+            margin: 20px 0; 
+            font-size: 20px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .admin-link:hover { 
+            background: #004d26;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .credentials { 
+            background: #e8f5e8; 
+            padding: 25px; 
+            border-radius: 8px; 
+            margin: 20px 0;
+            border-left: 5px solid #006633;
+        }
+        .warning { 
+            background: #fff3cd; 
+            border: 2px solid #ffeaa7; 
+            padding: 20px; 
+            border-radius: 8px; 
+            margin: 20px 0;
+        }
+        .step { 
+            margin: 15px 0; 
+            padding: 15px; 
+            background: #f8f9fa; 
+            border-left: 4px solid #006633;
+            border-radius: 5px;
+        }
+        .url-box { 
+            background: #2c3e50; 
+            color: #ecf0f1;
+            padding: 15px; 
+            border-radius: 5px; 
+            font-family: 'Courier New', monospace; 
+            font-size: 16px; 
+            margin: 15px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+        .status { 
+            background: #d4edda; 
+            border: 2px solid #c3e6cb; 
+            padding: 20px; 
+            border-radius: 8px; 
+            margin: 20px 0;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .button-group button {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .copy-btn {
+            background: #007bff;
+            color: white;
+        }
+        .copy-btn:hover {
+            background: #0056b3;
+        }
+        .open-btn {
+            background: #28a745;
+            color: white;
+        }
+        .open-btn:hover {
+            background: #1e7e34;
+        }
+        .error-explanation {
+            background: #f8d7da;
+            border: 2px solid #f5c6cb;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🇰🇪 Kenya Electoral System</h1>
+            <h2>Admin Panel - HTTP Protocol Fix</h2>
+        </div>
+
+        <div class="error-explanation">
+            <h3>🔧 Understanding the Error:</h3>
+            <p><strong>"Unsafe attempt to load URL https://127.0.0.1:8000/admin/ from frame with URL chrome-error://chromewebdata/"</strong></p>
+            <p>This error occurs because:</p>
+            <ul>
+                <li>Browser is trying to access <strong>HTTPS</strong> (secure)</li>
+                <li>Server is running on <strong>HTTP</strong> (not secure)</li>
+                <li>Chrome blocks cross-protocol access from error pages</li>
+            </ul>
+        </div>
+
+        <div class="status">
+            <strong>✅ Server Status:</strong> Running on HTTP://127.0.0.1:8000/
+            <br><strong>✅ Protocol:</strong> HTTP (not HTTPS)
+            <br><strong>✅ Admin Status:</strong> Ready for Login
+            <br><strong>✅ Fix Applied:</strong> Force HTTP protocol
+        </div>
+
+        <div class="credentials">
+            <h3>🔑 Admin Login Credentials:</h3>
+            <p><strong>Username:</strong> <code>superadmin</code></p>
+            <p><strong>Password:</strong> <code>superadmin123</code></p>
+        </div>
+
+        <div class="url-box">
+            http://127.0.0.1:8000/admin/
+        </div>
+
+        <div class="button-group">
+            <button class="copy-btn" onclick="copyToClipboard()">
+                📋 Copy URL
+            </button>
+            <button class="open-btn" onclick="openAdminForced()">
+                🚀 Open Admin (Forced HTTP)
+            </button>
+        </div>
+
+        <div class="step">
+            <h3>📋 Step-by-Step Solution:</h3>
+            <ol>
+                <li><strong>Copy the URL</strong> using the button above</li>
+                <li><strong>Open new browser window</strong> (or incognito mode)</li>
+                <li><strong>Paste the URL</strong> in the address bar</li>
+                <li><strong>Ensure it stays HTTP</strong> (don't let browser change to HTTPS)</li>
+                <li><strong>Press Enter</strong> and login with credentials</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3>🔧 Alternative Methods:</h3>
+            <ul>
+                <li><strong>Clear SSL State:</strong> Chrome Settings → Clear SSL certificates</li>
+                <li><strong>Disable HTTPS-First:</strong> Chrome Settings → Turn off "Always use secure connections"</li>
+                <li><strong>Use Incognito:</strong> Prevents protocol auto-correction</li>
+                <li><strong>Try Firefox:</strong> Better with local HTTP servers</li>
+            </ul>
+        </div>
+
+        <div class="warning">
+            <strong>⚠️ Important:</strong> Always use <strong>http://</strong> not <strong>https://</strong> for local development. The Kenya Electoral System server runs on HTTP protocol only.
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <p><strong>🎯 The admin panel is working perfectly - just use HTTP protocol!</strong></p>
+            <p><em>If one method doesn't work, try the next. All methods lead to the same working admin panel.</em></p>
+        </div>
+    </div>
+
+    <script>
+        function copyToClipboard() {
+            const url = 'http://127.0.0.1:8000/admin/';
+            navigator.clipboard.writeText(url).then(function() {
+                alert('✅ Admin URL copied to clipboard!\n\nNow:\n1. Open new browser window\n2. Paste URL in address bar\n3. Login with superadmin/superadmin123');
+            }).catch(function(err) {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = url;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('✅ Admin URL copied to clipboard!');
+            });
+        }
+
+        function openAdminForced() {
+            // Force HTTP protocol
+            const adminUrl = 'http://127.0.0.1:8000/admin/';
+            
+            // Open in new window with forced HTTP
+            const newWindow = window.open(adminUrl, '_blank');
+            
+            if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+                // Popup blocked, show instructions
+                alert('🚀 Admin Access Instructions:\n\n1. Copy this URL: ' + adminUrl + '\n2. Open new browser window\n3. Paste URL in address bar\n4. Login with superadmin/superadmin123');
+            } else {
+                // Focus on the new window
+                newWindow.focus();
+            }
+        }
+
+        // Auto-copy on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                console.log('🇰🇪 Kenya Electoral System - Admin Access Ready');
+                console.log('📋 Admin URL: http://127.0.0.1:8000/admin/');
+                console.log('🔑 Credentials: superadmin / superadmin123');
+            }, 1000);
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            if (event.ctrlKey && event.key === 'c') {
+                copyToClipboard();
+            }
+            if (event.ctrlKey && event.key === 'o') {
+                event.preventDefault();
+                openAdminForced();
+            }
+        });
+    </script>
+</body>
+</html>

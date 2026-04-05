@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" role="img" aria-label="Kenya flag">
+  <rect width="900" height="600" fill="#fff"/>
+  <rect x="0" y="0" width="900" height="190" fill="#000"/>
+  <rect x="0" y="210" width="900" height="180" fill="#be1126"/>
+  <rect x="0" y="410" width="900" height="190" fill="#1f6b00"/>
+
+  <line x1="320" y1="145" x2="458" y2="490" stroke="#ffffff" stroke-width="8"/>
+  <line x1="580" y1="145" x2="442" y2="490" stroke="#ffffff" stroke-width="8"/>
+
+  <ellipse cx="450" cy="300" rx="95" ry="175" fill="#be1126"/>
+  <ellipse cx="450" cy="300" rx="38" ry="165" fill="#fff"/>
+  <ellipse cx="450" cy="300" rx="18" ry="165" fill="#be1126"/>
+  <ellipse cx="450" cy="300" rx="12" ry="150" fill="#fff"/>
+  <ellipse cx="450" cy="300" rx="16" ry="24" fill="#fff"/>
+
+  <path d="M355 300 C355 245 375 190 405 150 C372 195 360 248 360 300 C360 352 372 405 405 450 C375 410 355 355 355 300Z" fill="#000"/>
+  <path d="M545 300 C545 245 525 190 495 150 C528 195 540 248 540 300 C540 352 528 405 495 450 C525 410 545 355 545 300Z" fill="#000"/>
+</svg>

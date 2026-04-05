@@ -1,0 +1,82 @@
+{% extends 'voting/base.html' %}
+
+{% block title %}Verify OTP{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h3 class="mb-0">Verify Your Account</h3>
+        </div>
+        <div class="card-body">
+          {% if otp_code %}
+          <div class="alert alert-success text-center" style="font-size: 1.5rem; font-weight: bold;">
+            <i class="fas fa-key"></i>
+            Your OTP Code is: <span style="letter-spacing: 3px; font-family: monospace; font-size: 2rem;">{{ otp_code }}</span>
+          </div>
+          {% endif %}
+          
+          <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i>
+            Please enter the 6-digit verification code displayed above to complete your registration.
+          </div>
+          
+          <form method="post" id="otpForm">
+            {% csrf_token %}
+            
+            <div class="mb-4">
+              <label for="otp_code" class="form-label">Verification Code</label>
+              <input
+                type="text"
+                class="form-control form-control-lg text-center"
+                id="otp_code"
+                name="otp_code"
+                placeholder="Enter 6-digit code"
+                maxlength="6"
+                pattern="[0-9]{6}"
+                required
+                autofocus
+                {% if otp_code %}value="{{ otp_code }}"{% endif %}
+              />
+              <small class="text-muted">Enter the 6-digit code you received</small>
+            </div>
+            
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary btn-lg">Verify Account</button>
+              <a href="{% url 'voting:register' %}" class="btn btn-outline-secondary">Back to Registration</a>
+            </div>
+          </form>
+          
+          <div class="mt-3 text-center">
+            <small class="text-muted">
+              Didn't receive the code? The code is valid for 10 minutes.
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  $(document).ready(function() {
+    // Auto-format OTP input to only accept numbers
+    $('#otp_code').on('input', function() {
+      this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);
+    });
+    
+    // Auto-submit when 6 digits are entered
+    $('#otp_code').on('input', function() {
+      if (this.value.length === 6) {
+        setTimeout(function() {
+          $('#otpForm').submit();
+        }, 500); // Small delay to show the filled code
+      }
+    });
+  });
+</script>
+{% endblock %}

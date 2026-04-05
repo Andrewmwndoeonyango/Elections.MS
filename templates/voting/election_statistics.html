@@ -1,0 +1,139 @@
+{% extends 'voting/base.html' %}
+
+{% block title %}Election Statistics{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="d-flex justify-content-end gap-2 mb-3">
+        <a href="{% url 'voting:admin_portal' %}" class="btn btn-outline-primary">Admin Portal</a>
+        <a href="{% url 'voting:admin_dashboard' %}" class="btn btn-primary">Admin Dashboard</a>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h3 class="mb-0">Election Results</h3>
+            <small>Last Updated: {{ last_updated|date:"Y-m-d H:i:s" }}</small>
+        </div>
+        <div class="card-body">
+            {% for position_stat in stats %}
+                <div class="position-section mb-5">
+                    <h4 class="border-bottom pb-2">{{ position_stat.position.get_name_display }}</h4>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Rank</th>
+                                            <th>Candidate</th>
+                                            <th>Party</th>
+                                            <th>Votes</th>
+                                            <th>Percentage</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for candidate in position_stat.candidates %}
+                                            <tr {% if forloop.first %}class="table-success"{% endif %}>
+                                                <td>{{ forloop.counter }}</td>
+                                                <td>
+                                                    {% if candidate.candidate.photo %}
+                                                        <img src="{{ candidate.candidate.photo.url }}" 
+                                                             alt="{{ candidate.candidate.first_name }}"
+                                                             class="rounded-circle me-2"
+                                                             style="width: 30px; height: 30px; object-fit: cover;">
+                                                    {% else %}
+                                                        <span class="rounded-circle d-inline-flex align-items-center justify-content-center me-2 bg-secondary text-white"
+                                                              style="width: 30px; height: 30px; font-size: 12px;">
+                                                            <i class="fas fa-user"></i>
+                                                        </span>
+                                                    {% endif %}
+                                                    {{ candidate.candidate.first_name }} {{ candidate.candidate.last_name }}
+                                                </td>
+                                                <td>
+                                                    {% if candidate.candidate.party.logo %}
+                                                        <img src="{{ candidate.candidate.party.logo.url }}"
+                                                             alt="{{ candidate.candidate.party.name }}"
+                                                             class="me-2"
+                                                             style="width: 20px; height: 20px; object-fit: contain;">
+                                                    {% else %}
+                                                        <span class="badge bg-light text-dark me-2" style="font-size: 10px;">
+                                                            LOGO
+                                                        </span>
+                                                    {% endif %}
+                                                    {{ candidate.candidate.party.name }}
+                                                </td>
+                                                <td>{{ candidate.votes }}</td>
+                                                <td>{{ candidate.percentage|floatformat:1 }}%</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                    <tfoot>
+                                        <tr class="table-info">
+                                            <td colspan="3"><strong>Total Votes</strong></td>
+                                            <td><strong>{{ position_stat.total_votes }}</strong></td>
+                                            <td><strong>100%</strong></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <canvas id="chart-{{ position_stat.position.name }}" width="400" height="400"></canvas>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    {% for position_stat in stats %}
+        new Chart(document.getElementById('chart-{{ position_stat.position.name }}').getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: [
+                    {% for candidate in position_stat.candidates %}
+                        '{{ candidate.candidate.first_name }} {{ candidate.candidate.last_name }}',
+                    {% endfor %}
+                ],
+                datasets: [{
+                    data: [
+                        {% for candidate in position_stat.candidates %}
+                            {{ candidate.votes }},
+                        {% endfor %}
+                    ],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.8)',
+                        'rgba(54, 162, 235, 0.8)',
+                        'rgba(255, 206, 86, 0.8)',
+                        'rgba(75, 192, 192, 0.8)',
+                        'rgba(153, 102, 255, 0.8)',
+                        'rgba(255, 159, 64, 0.8)',
+                        'rgba(255, 99, 132, 0.8)',
+                        'rgba(54, 162, 235, 0.8)',
+                        'rgba(255, 206, 86, 0.8)',
+                        'rgba(75, 192, 192, 0.8)'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    title: {
+                        display: true,
+                        text: '{{ position_stat.position.get_name_display }} Results'
+                    }
+                }
+            }
+        });
+    {% endfor %}
+});
+</script>
+{% endblock %} 

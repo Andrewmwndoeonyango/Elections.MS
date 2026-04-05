@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kenya Electoral System - Admin Access</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 50px; background: #f5f5f5; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { text-align: center; color: #006633; margin-bottom: 30px; }
+        .admin-link { display: block; background: #006633; color: white; text-decoration: none; padding: 15px 30px; text-align: center; border-radius: 5px; margin: 20px 0; font-size: 18px; }
+        .admin-link:hover { background: #004d26; }
+        .credentials { background: #e8f5e8; padding: 20px; border-radius: 5px; margin: 20px 0; }
+        .warning { background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        .step { margin: 10px 0; padding: 10px; background: #f8f9fa; border-left: 4px solid #006633; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🇰🇪 Kenya Electoral System</h1>
+            <h2>Admin Panel Access</h2>
+        </div>
+
+        <div class="warning">
+            <strong>⚠️ Important:</strong> Use HTTP protocol only. The server runs on HTTP, not HTTPS.
+        </div>
+
+        <div class="credentials">
+            <h3>🔑 Admin Login Credentials:</h3>
+            <p><strong>Username:</strong> superadmin</p>
+            <p><strong>Password:</strong> superadmin123</p>
+        </div>
+
+        <div class="step">
+            <h3>📋 Step-by-Step Access:</h3>
+            <ol>
+                <li>Click the admin link below (uses HTTP)</li>
+                <li>Enter credentials: superadmin / superadmin123</li>
+                <li>Click "Log in" button</li>
+                <li>Admin dashboard will load</li>
+            </ol>
+        </div>
+
+        <a href="http://127.0.0.1:8000/admin/" class="admin-link" target="_blank">
+            🚀 Open Admin Panel (HTTP)
+        </a>
+
+        <div class="step">
+            <h3>🔧 If You Still See HTTPS Error:</h3>
+            <ul>
+                <li>Copy this URL: <code>http://127.0.0.1:8000/admin/</code></li>
+                <li>Open new browser window (or incognito)</li>
+                <li>Paste the URL manually</li>
+                <li>Don't let browser change to HTTPS</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>📊 Admin Features Available:</h3>
+            <ul>
+                <li>✅ 47 Counties Management</li>
+                <li>✅ 290 Constituencies Control</li>
+                <li>✅ 1,450 Wards Administration</li>
+                <li>✅ 24,559 Polling Centers</li>
+                <li>✅ 46,232 Polling Stations</li>
+                <li>✅ 177 Candidates Management</li>
+                <li>✅ Voter Registration & Verification</li>
+                <li>✅ Real-time Vote Tracking</li>
+            </ul>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px; color: #666;">
+            <p>Server Status: ✅ Running on http://127.0.0.1:8000/</p>
+            <p>Admin Status: ✅ Ready for Login</p>
+        </div>
+    </div>
+
+    <script>
+        // Force HTTP protocol
+        document.addEventListener('DOMContentLoaded', function() {
+            const adminLink = document.querySelector('.admin-link');
+            adminLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.open('http://127.0.0.1:8000/admin/', '_blank');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal - Kenya Election Management System</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .header {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        text-align: center;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      }
+      .header h1 {
+        color: #2d3436;
+        font-size: 2.5em;
+        margin-bottom: 10px;
+      }
+      .header p {
+        color: #636e72;
+        font-size: 1.2em;
+      }
+      .admin-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 30px;
+        margin-bottom: 30px;
+      }
+      .admin-card {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease;
+        cursor: pointer;
+      }
+      .admin-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+      }
+      .admin-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+      }
+      .admin-icon {
+        font-size: 3em;
+        margin-bottom: 20px;
+      }
+      .admin-title {
+        color: #2d3436;
+        font-size: 1.5em;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+      .admin-description {
+        color: #636e72;
+        margin-bottom: 20px;
+      }
+      .admin-button {
+        background: #e17055;
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 25px;
+        font-size: 1em;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+      .admin-button:hover {
+        background: #d63031;
+      }
+      .stats-section {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        margin-bottom: 30px;
+      }
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+      }
+      .stat-item {
+        text-align: center;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 10px;
+      }
+      .stat-number {
+        font-size: 2.5em;
+        font-weight: bold;
+        color: #e17055;
+        margin-bottom: 10px;
+      }
+      .stat-label {
+        color: #636e72;
+        font-size: 1em;
+      }
+      .quick-actions {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      }
+      .quick-actions h3 {
+        color: #2d3436;
+        margin-bottom: 20px;
+      }
+      .action-buttons {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+      }
+      .action-buttons a {
+        text-decoration: none;
+      }
+      .action-btn {
+        background: #00b894;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+      .action-btn:hover {
+        background: #00a085;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Admin Portal</h1>
+        <p>Kenya Election Management System - Administrative Control</p>
+      </div>
+
+      <div class="stats-section">
+        <h3>System Overview</h3>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-number">{{ counties_count }}</div>
+            <div class="stat-label">Counties</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">{{ constituencies_count }}</div>
+            <div class="stat-label">Constituencies</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">{{ wards_count }}</div>
+            <div class="stat-label">Wards</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">{{ candidates_count }}</div>
+            <div class="stat-label">Candidates</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">{{ results_entered_count }}</div>
+            <div class="stat-label">Results Entered</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">{{ total_votes_count }}</div>
+            <div class="stat-label">Total Votes</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-grid">
+        <a href="/admin/" class="admin-link">
+          <div class="admin-card">
+            <div class="admin-icon">🔧</div>
+            <div class="admin-title">Django Admin</div>
+            <div class="admin-description">
+              Full administrative control over all system data and users
+            </div>
+            <button class="admin-button" type="button">Access Admin</button>
+          </div>
+        </a>
+
+        <a href="{% url 'voting:election_statistics' %}" class="admin-link">
+          <div class="admin-card">
+            <div class="admin-icon">📊</div>
+            <div class="admin-title">Results Dashboard</div>
+            <div class="admin-description">
+              View and manage election results with advanced analytics
+            </div>
+            <button class="admin-button" type="button">View Statistics</button>
+          </div>
+        </a>
+
+        <a href="/admin/" class="admin-link">
+          <div class="admin-card">
+            <div class="admin-icon">👥</div>
+            <div class="admin-title">Manage Candidates</div>
+            <div class="admin-description">
+              Add, edit, and manage candidate information and affiliations
+            </div>
+            <button class="admin-button" type="button">
+              Manage Candidates
+            </button>
+          </div>
+        </a>
+      </div>
+
+      <div class="quick-actions">
+        <h3>Quick Actions</h3>
+        <div class="action-buttons">
+          <a href="{% url 'voting:admin_dashboard' %}" class="admin-link" style="display: inline-block;">
+            <button class="action-btn" type="button">📊 Admin Dashboard</button>
+          </a>
+          <a href="{% url 'voting:election_statistics' %}" class="admin-link" style="display: inline-block;">
+            <button class="action-btn" type="button">📈 Election Statistics</button>
+          </a>
+          <a href="/admin/" class="admin-link" style="display: inline-block;">
+            <button class="action-btn" type="button">🔧 Open Django Admin</button>
+          </a>
+          <a href="/voter/" class="admin-link" style="display: inline-block;">
+            <button class="action-btn" type="button">👥 View Voter Portal</button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

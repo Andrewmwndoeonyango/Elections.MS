@@ -1,0 +1,94 @@
+{% extends 'voting/base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Voter Information</h4>
+                </div>
+                <div class="card-body">
+                    <p><strong>Name:</strong> {{ voter.user.first_name }} {{ voter.user.last_name }}</p>
+                    <p><strong>ID Number:</strong> {{ voter.id_number }}</p>
+                    <p><strong>County:</strong> {{ voter.county.name }}</p>
+                    <p><strong>Constituency:</strong> {{ voter.constituency.name }}</p>
+                    <p><strong>Ward:</strong> {{ voter.ward.name }}</p>
+                    <p><strong>Polling Center:</strong> {{ voter.polling_center.name }}</p>
+                    <p><strong>Polling Station:</strong> {{ voter.polling_station.name }}</p>
+                    <a href="{% url 'voting:profile' %}" class="btn btn-primary">View Full Profile</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Voting Status</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Position</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for position in positions %}
+                                    <tr>
+                                        <td>{{ position.get_name_display }}</td>
+                                        <td>
+                                            {% if position in voted_positions %}
+                                                <span class="badge bg-success">Voted</span>
+                                            {% else %}
+                                                <span class="badge bg-warning">Not Voted</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if position in voted_positions %}
+                                                <button class="btn btn-secondary btn-sm" disabled>Already Voted</button>
+                                            {% else %}
+                                                <a href="{% url 'voting:vote' position.name %}" class="btn btn-primary btn-sm">Vote Now</a>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">Important Information</h4>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <i class="fas fa-info-circle text-info me-2"></i>
+                            You can only vote once for each position
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fas fa-info-circle text-info me-2"></i>
+                            Make sure to review your choice before confirming your vote
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fas fa-info-circle text-info me-2"></i>
+                            Your vote is confidential and secure
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fas fa-info-circle text-info me-2"></i>
+                            Contact election officials if you encounter any issues
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
