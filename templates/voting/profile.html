@@ -1,0 +1,130 @@
+{% extends 'voting/base.html' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Voter Profile</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 class="mb-3">Personal Information</h4>
+                            <table class="table">
+                                <tr>
+                                    <th>Full Name:</th>
+                                    <td>{{ voter.get_display_name }}</td>
+                                </tr>
+                                <tr>
+                                    <th>ID/Passport Number:</th>
+                                    <td>{{ voter.id_number }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Email:</th>
+                                    <td>{{ voter.user.email }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Phone Number:</th>
+                                    <td>{{ voter.phone_number }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Registration Date:</th>
+                                    <td>{{ voter.registration_date|date:"F d, Y" }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h4 class="mb-3">Voting Location</h4>
+                            <table class="table">
+                                <tr>
+                                    <th>County:</th>
+                                    <td>{{ voter.county.name }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Constituency:</th>
+                                    <td>{{ voter.constituency.name }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Ward:</th>
+                                    <td>{{ voter.ward.name }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Polling Center:</th>
+                                    <td>{{ voter.polling_center.name }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Polling Station:</th>
+                                    <td>{{ voter.polling_station.name }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <h4 class="mb-3">Voting History</h4>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Position</th>
+                                        <th>Candidate</th>
+                                        <th>Party</th>
+                                        <th>Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for vote in voter.vote_set.all %}
+                                        <tr>
+                                            <td>{{ vote.position.get_name_display }}</td>
+                                            <td>
+                                                {% if vote.candidate.photo and vote.candidate.photo.url %}
+                                                    <img src="{{ vote.candidate.photo.url }}" 
+                                                         alt="{{ vote.candidate.first_name }}"
+                                                         class="rounded-circle me-2"
+                                                         style="width: 30px; height: 30px; object-fit: cover;">
+                                                {% else %}
+                                                    <img src="https://picsum.photos/seed/{{ vote.candidate.id }}/30/30.jpg" 
+                                                         alt="{{ vote.candidate.first_name }}"
+                                                         class="rounded-circle me-2"
+                                                         style="width: 30px; height: 30px; object-fit: cover;">
+                                                {% endif %}
+                                                {{ vote.candidate.first_name }} {{ vote.candidate.last_name }}
+                                            </td>
+                                            <td>
+                                                {% if vote.candidate.party.logo and vote.candidate.party.logo.url %}
+                                                    <img src="{{ vote.candidate.party.logo.url }}"
+                                                         alt="{{ vote.candidate.party.name }}"
+                                                         class="me-2"
+                                                         style="width: 20px; height: 20px; object-fit: contain;">
+                                                {% else %}
+                                                    <span class="me-2" style="display: inline-block; width: 20px; height: 20px; background-color: #ccc; border-radius: 2px;"></span>
+                                                {% endif %}
+                                                {{ vote.candidate.party.name }}
+                                            </td>
+                                            <td>{{ vote.timestamp|date:"F d, Y H:i:s" }}</td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="4" class="text-center">No votes cast yet.</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <a href="{% url 'voting:dashboard' %}" class="btn btn-primary">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

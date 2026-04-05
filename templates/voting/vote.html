@@ -1,0 +1,107 @@
+{% extends 'voting/base.html' %}
+
+{% block title %}Vote for {{ position.get_name_display }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Vote for {{ position.get_name_display }}</h2>
+            <p class="text-muted">Select your preferred candidate</p>
+        </div>
+    </div>
+
+    {% if messages %}
+        <div class="row">
+            <div class="col-md-12">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="row">
+        {% for candidate in candidates %}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    {% if candidate.photo and candidate.photo.url %}
+                        <img src="{{ candidate.photo.url }}" class="card-img-top" alt="{{ candidate.first_name }} {{ candidate.last_name }}">
+                    {% else %}
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <i class="fas fa-user fa-3x text-muted"></i>
+                        </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ candidate.first_name }} {{ candidate.last_name }}</h5>
+                        <p class="card-text">
+                            <small class="text-muted">{{ candidate.party.name }}</small>
+                        </p>
+                        <p class="card-text">
+                            <strong>ID Number:</strong> {{ candidate.id_number }}<br>
+                            {% if candidate.county %}
+                                <strong>County:</strong> {{ candidate.county.name }}<br>
+                            {% endif %}
+                            {% if candidate.constituency %}
+                                <strong>Constituency:</strong> {{ candidate.constituency.name }}<br>
+                            {% endif %}
+                            {% if candidate.ward %}
+                                <strong>Ward:</strong> {{ candidate.ward.name }}
+                            {% endif %}
+                        </p>
+                        <a href="{% url 'voting:confirm_vote' candidate.id position.name %}" class="btn btn-primary">
+                            <i class="fas fa-vote-yea"></i> View Candidate & Confirm
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-md-12">
+                <div class="alert alert-info">
+                    No candidates found for this position.
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    {% if vote_stats %}
+        <div class="row mt-5">
+            <div class="col-md-12">
+                <h3>Current Vote Statistics</h3>
+                <div class="row">
+                    {% for stat in vote_stats %}
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ stat.candidate.first_name }} {{ stat.candidate.last_name }}</h5>
+                                    <p class="card-text">{{ stat.votes }} votes</p>
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar" data-width="{{ stat.percentage|default:0 }}" style="width: 0%;">
+                                            {{ stat.percentage|default:0 }}%
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Set progress bar widths from data attributes
+    document.querySelectorAll('.progress-bar[data-width]').forEach(function(bar) {
+        var width = bar.getAttribute('data-width');
+        bar.style.width = width + '%';
+    });
+});
+</script>
+{% endblock %}

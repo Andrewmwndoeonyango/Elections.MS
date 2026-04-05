@@ -1,0 +1,201 @@
+{% extends 'voting/base.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="d-flex justify-content-end gap-2 mb-3">
+        <a href="{% url 'voting:admin_portal' %}" class="btn btn-outline-primary">Admin Portal</a>
+        <a href="{% url 'voting:election_statistics' %}" class="btn btn-primary">Election Statistics</a>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase mb-1">Total Registered Voters</h6>
+                            <h2 class="mb-0">{{ total_voters }}</h2>
+                        </div>
+                        <i class="fas fa-users fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase mb-1">Total Votes Cast</h6>
+                            <h2 class="mb-0">{{ total_votes }}</h2>
+                        </div>
+                        <i class="fas fa-vote-yea fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-info text-white mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase mb-1">Total Candidates</h6>
+                            <h2 class="mb-0">{{ total_candidates }}</h2>
+                        </div>
+                        <i class="fas fa-user-tie fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Voter Registration Trend</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="registrationChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Votes by Position</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="votesChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Position Statistics -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Position Statistics</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Position</th>
+                            <th>Total Candidates</th>
+                            <th>Total Votes</th>
+                            <th>Voting Progress</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stat in position_stats %}
+                            <tr>
+                                <td>{{ stat.get_name_display }}</td>
+                                <td>{{ stat.total_candidates }}</td>
+                                <td>{{ stat.total_votes }}</td>
+                                <td>
+                                    <div class="progress">
+                                        <div class="progress-bar bg-success" role="progressbar" 
+                                             style="width: {% widthratio stat.total_votes total_voters 100 %}%">
+                                            {% widthratio stat.total_votes total_voters 100 %}%
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Votes -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Recent Votes</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Voter</th>
+                            <th>Position</th>
+                            <th>Candidate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for vote in recent_votes %}
+                            <tr>
+                                <td>{{ vote.timestamp|date:"Y-m-d H:i:s" }}</td>
+                                <td>{{ vote.voter.user.get_full_name }}</td>
+                                <td>{{ vote.position.get_name_display }}</td>
+                                <td>{{ vote.candidate.first_name }} {{ vote.candidate.last_name }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    // Registration Trend Chart
+    const registrationCtx = document.getElementById('registrationChart').getContext('2d');
+    new Chart(registrationCtx, {
+        type: 'line',
+        data: {
+            labels: [{% for item in registration_trend %}'{{ item.date|date:"Y-m-d" }}',{% endfor %}],
+            datasets: [{
+                label: 'New Registrations',
+                data: [{% for item in registration_trend %}{{ item.count }},{% endfor %}],
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Votes by Position Chart
+    const votesCtx = document.getElementById('votesChart').getContext('2d');
+    new Chart(votesCtx, {
+        type: 'bar',
+        data: {
+            labels: [{% for stat in position_stats %}'{{ stat.get_name_display }}',{% endfor %}],
+            datasets: [{
+                label: 'Total Votes',
+                data: [{% for stat in position_stats %}{{ stat.total_votes }},{% endfor %}],
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                borderColor: 'rgb(54, 162, 235)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %} 

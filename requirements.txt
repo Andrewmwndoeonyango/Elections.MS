@@ -1,0 +1,10 @@
+Django==5.0.2
+psycopg2-binary==2.9.11
+django-jazzmin==2.6.0
+Pillow==11.3.0
+django-phonenumber-field[phonenumbers]==7.3.0
+django-crispy-forms==2.1
+crispy-bootstrap4==2023.1
+django-widget-tweaks==1.5.0
+django-smart-selects==1.7.2
+django-chartjs==2.3.0 

@@ -1,0 +1,148 @@
+{% extends 'voting/base.html' %}
+
+{% block title %}Election Statistics{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <h1 class="mb-3">Election Statistics</h1>
+                    <p class="lead mb-0">Real-time election results and analytics</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overall Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <h2 class="mb-1">{{ total_voters }}</h2>
+                    <p class="mb-0">Total Registered Voters</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <h2 class="mb-1">{{ total_votes }}</h2>
+                    <p class="mb-0">Total Votes Cast</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card bg-warning text-dark">
+                <div class="card-body text-center">
+                    <h2 class="mb-1">{{ overall_turnout }}%</h2>
+                    <p class="mb-0">Overall Turnout</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card bg-secondary text-white">
+                <div class="card-body text-center">
+                    <h2 class="mb-1">{{ voter_votes.count }}</h2>
+                    <p class="mb-0">Your Votes Cast</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Position-wise Statistics -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Position-wise Results</h5>
+                </div>
+                <div class="card-body">
+                    {% for stat in position_stats %}
+                        <div class="mb-4">
+                            <h6 class="text-primary mb-3">{{ stat.position.get_name_display }}</h6>
+                            <div class="row mb-2">
+                                <div class="col-md-4">
+                                    <small class="text-muted">Total Votes: {{ stat.total_votes }}</small>
+                                </div>
+                                <div class="col-md-4">
+                                    <small class="text-muted">Candidates: {{ stat.candidates_count }}</small>
+                                </div>
+                                <div class="col-md-4">
+                                    <small class="text-muted">Turnout: 
+                                        {% if stat.candidates_count > 0 %}
+                                            {{ stat.total_votes|floatformat:0 }} votes cast
+                                        {% else %}
+                                            No votes yet
+                                        {% endif %}
+                                    </small>
+                                </div>
+                            </div>
+                            
+                            {% if stat.top_candidates %}
+                                {% for candidate_stat in stat.top_candidates %}
+                                    <div class="row align-items-center mb-2">
+                                        <div class="col-md-6">
+                                            <div class="d-flex align-items-center">
+                                                {% if candidate_stat.candidate.photo and candidate_stat.candidate.photo.url %}
+                                                    <img src="{{ candidate_stat.candidate.photo.url }}" 
+                                                         alt="{{ candidate_stat.candidate.first_name }}"
+                                                         class="rounded-circle me-2"
+                                                         style="width: 30px; height: 30px; object-fit: cover;">
+                                                {% else %}
+                                                    <img src="https://picsum.photos/seed/{{ candidate_stat.candidate.id }}/30/30.jpg" 
+                                                         alt="{{ candidate_stat.candidate.first_name }}"
+                                                         class="rounded-circle me-2"
+                                                         style="width: 30px; height: 30px; object-fit: cover;">
+                                                {% endif %}
+                                                <div>
+                                                    <strong>{{ candidate_stat.candidate.first_name }} {{ candidate_stat.candidate.last_name }}</strong>
+                                                    <br><small class="text-muted">{{ candidate_stat.candidate.party.name }}</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="d-flex align-items-center">
+                                                <div class="progress flex-grow-1 me-3" style="height: 20px;">
+                                                    <div class="progress-bar bg-primary" 
+                                                         style="width: {{ candidate_stat.percentage }}%;">
+                                                        {{ candidate_stat.percentage }}%
+                                                    </div>
+                                                </div>
+                                                <small class="text-muted">{{ candidate_stat.vote_count }} votes</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <p class="text-muted">No votes cast yet for this position.</p>
+                            {% endif %}
+                            
+                            {% if not forloop.last %}<hr>{% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auto-refresh info -->
+    <div class="row">
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <i class="fas fa-sync-alt"></i>
+                <small>This page refreshes automatically every 30 seconds for the latest results</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Auto-refresh every 30 seconds -->
+<script>
+setTimeout(function(){
+    window.location.reload();
+}, 30000);
+</script>
+{% endblock %}

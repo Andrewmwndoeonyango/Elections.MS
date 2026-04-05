@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voter Portal - Kenya Election Management System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: Arial, sans-serif; 
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            min-height: 100vh;
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 20px;
+        }
+        .header { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 15px; 
+            text-align: center; 
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .header h1 { 
+            color: #2d3436; 
+            font-size: 2.5em; 
+            margin-bottom: 10px;
+        }
+        .header p { 
+            color: #636e72; 
+            font-size: 1.2em;
+        }
+        .access-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 30px; 
+            margin-bottom: 30px;
+        }
+        .access-card { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 15px; 
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        .access-card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+        .access-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .access-icon { 
+            font-size: 3em; 
+            margin-bottom: 20px;
+        }
+        .access-title { 
+            color: #2d3436; 
+            font-size: 1.5em; 
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .access-description { 
+            color: #636e72; 
+            margin-bottom: 20px;
+        }
+        .access-button { 
+            background: #0984e3; 
+            color: white; 
+            padding: 12px 30px; 
+            border: none; 
+            border-radius: 25px; 
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .access-button:hover { 
+            background: #74b9ff; 
+        }
+        .info-section { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        .info-section h3 { 
+            color: #2d3436; 
+            margin-bottom: 20px;
+        }
+        .info-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+            gap: 20px;
+        }
+        .info-item { 
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #0984e3;
+        }
+        .info-label { 
+            color: #636e72; 
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+        .info-value { 
+            color: #2d3436; 
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Voter Portal</h1>
+            <p>Kenya Election Management System - Public Access</p>
+        </div>
+        
+        <div class="access-grid">
+            <a href="/dashboard/" class="access-link">
+                <div class="access-card">
+                    <div class="access-icon">📊</div>
+                    <div class="access-title">View Results</div>
+                    <div class="access-description">Access live election results from polling stations across Kenya</div>
+                    <button class="access-button" type="button">View Results</button>
+                </div>
+            </a>
+            
+            <a href="/admin-portal/" class="access-link">
+                <div class="access-card">
+                    <div class="access-icon">👥</div>
+                    <div class="access-title">Admin Portal</div>
+                    <div class="access-description">Open the administration area and system management pages</div>
+                    <button class="access-button" type="button">Open Admin Portal</button>
+                </div>
+            </a>
+            
+            <a href="/voter-education/" class="access-link">
+                <div class="access-card">
+                    <div class="access-icon">📚</div>
+                    <div class="access-title">Voter Education</div>
+                    <div class="access-description">Learn about registration, verification, voting steps, and your rights as a voter</div>
+                    <button class="access-button" type="button">Open Voter Education</button>
+                </div>
+            </a>
+        </div>
+        
+        <div class="info-section">
+            <h3>📊 Election Statistics</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Total Counties</div>
+                    <div class="info-value">{{ counties_count }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Total Constituencies</div>
+                    <div class="info-value">{{ constituencies_count }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Total Wards</div>
+                    <div class="info-value">{{ wards_count }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Total Candidates</div>
+                    <div class="info-value">{{ candidates_count }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Registered Voters</div>
+                    <div class="info-value">{{ registered_voters_count }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Polling Stations</div>
+                    <div class="info-value">{{ polling_stations_count }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

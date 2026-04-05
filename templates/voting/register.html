@@ -1,0 +1,337 @@
+{% extends 'voting/base.html' %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h3 class="mb-0">Voter Registration</h3>
+        </div>
+        <div class="card-body">
+          <form method="post" id="registrationForm">
+            {% csrf_token %}
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="first_name" class="form-label">First Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="first_name"
+                  name="first_name"
+                  required
+                />
+              </div>
+              <div class="col-md-6">
+                <label for="last_name" class="form-label">Last Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="last_name"
+                  name="last_name"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="id_number" class="form-label"
+                  >ID/Passport Number</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="id_number"
+                  name="id_number"
+                  required
+                />
+              </div>
+              <div class="col-md-6">
+                <label for="phone_number" class="form-label"
+                  >Phone Number</label
+                >
+                <input
+                  type="tel"
+                  class="form-control"
+                  id="phone_number"
+                  name="phone_number"
+                  pattern="^\+254[0-9]{9}$"
+                  placeholder="+254XXXXXXXXX"
+                  required
+                />
+                <small class="text-muted">Format: +254XXXXXXXXX</small>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label">Email Address</label>
+              <input
+                type="email"
+                class="form-control"
+                id="email"
+                name="email"
+                required
+              />
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="county" class="form-label">County</label>
+                <select class="form-select" id="county" name="county" required>
+                  <option value="">Select County</option>
+                  {% for county in counties %}
+                  <option value="{{ county.id }}">{{ county.name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="constituency" class="form-label"
+                  >Constituency</label
+                >
+                <select
+                  class="form-select"
+                  id="constituency"
+                  name="constituency"
+                  required
+                  disabled
+                >
+                  <option value="">Select Constituency</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <label for="ward" class="form-label">Ward</label>
+                <select
+                  class="form-select"
+                  id="ward"
+                  name="ward"
+                  required
+                  disabled
+                >
+                  <option value="">Select Ward</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label for="polling_center" class="form-label"
+                  >Polling Center</label
+                >
+                <select
+                  class="form-select"
+                  id="polling_center"
+                  name="polling_center"
+                  required
+                  disabled
+                >
+                  <option value="">Select Polling Center</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label for="polling_station" class="form-label"
+                  >Polling Station</label
+                >
+                <select
+                  class="form-select"
+                  id="polling_station"
+                  name="polling_station"
+                  required
+                  disabled
+                >
+                  <option value="">Select Polling Station</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="username" class="form-label">Username</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="username"
+                  name="username"
+                  value="{{ user.username|default:'' }}"
+                  {% if user.is_authenticated %}readonly{% endif %}
+                  required
+                />
+                {% if user.is_authenticated %}
+                <small class="text-muted">Username is locked for logged-in users</small>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                {% if user.is_authenticated %}
+                <label for="first_name" class="form-label">First Name</label>
+                <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name|default:'' }}" required />
+                {% else %}
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required />
+                {% endif %}
+              </div>
+            </div>
+
+            {% if not user.is_authenticated %}
+            <div class="mb-3">
+              <label for="confirm_password" class="form-label"
+                >Confirm Password</label
+              >
+              <input
+                type="password"
+                class="form-control"
+                id="confirm_password"
+                required
+              />
+            </div>
+            {% endif %}
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">Register</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  $(document).ready(function () {
+    // Password confirmation
+    $("#registrationForm").on("submit", function (e) {
+      if ($("#password").val() !== $("#confirm_password").val()) {
+        e.preventDefault();
+        alert("Passwords do not match!");
+      }
+    });
+
+    // Dependent dropdowns
+    $("#county").change(function () {
+      const countyId = $(this).val();
+      if (countyId) {
+        $.get("{% url 'voting:load_constituencies' %}", { county: countyId })
+          .done(function (data) {
+            let options = '<option value="">Select Constituency</option>';
+            data.forEach(function (item) {
+              options += `<option value="${item.id}">${item.name}</option>`;
+            });
+            $("#constituency").html(options).prop("disabled", false);
+            $("#ward, #polling_center")
+              .html('<option value="">Select...</option>')
+              .prop("disabled", true);
+          })
+          .fail(function (xhr, status, error) {
+            console.error("Error loading constituencies:", error);
+            alert("Error loading constituencies. Please try again.");
+            $("#constituency")
+              .html('<option value="">Select Constituency</option>')
+              .prop("disabled", true);
+          });
+      } else {
+        $("#constituency, #ward, #polling_center")
+          .html('<option value="">Select...</option>')
+          .prop("disabled", true);
+      }
+    });
+
+    $("#constituency").change(function () {
+      const constituencyId = $(this).val();
+      if (constituencyId) {
+        $.get("{% url 'voting:load_wards' %}", {
+          constituency: constituencyId,
+        })
+          .done(function (data) {
+            let options = '<option value="">Select Ward</option>';
+            data.forEach(function (item) {
+              options += `<option value="${item.id}">${item.name}</option>`;
+            });
+            $("#ward").html(options).prop("disabled", false);
+            $("#polling_center")
+              .html('<option value="">Select...</option>')
+              .prop("disabled", true);
+          })
+          .fail(function (xhr, status, error) {
+            console.error("Error loading wards:", error);
+            alert("Error loading wards. Please try again.");
+            $("#ward")
+              .html('<option value="">Select Ward</option>')
+              .prop("disabled", true);
+          });
+      } else {
+        $("#ward, #polling_center")
+          .html('<option value="">Select...</option>')
+          .prop("disabled", true);
+      }
+    });
+
+    $("#ward").change(function () {
+      const wardId = $(this).val();
+      if (wardId) {
+        $.get("{% url 'voting:load_polling_centers' %}", {
+          ward: wardId,
+        })
+          .done(function (data) {
+            let options = '<option value="">Select Polling Center</option>';
+            data.forEach(function (item) {
+              options += `<option value="${item.id}">${item.name}</option>`;
+            });
+            $("#polling_center").html(options).prop("disabled", false);
+            $("#polling_station")
+              .html('<option value="">Select Polling Station</option>')
+              .prop("disabled", true);
+          })
+          .fail(function (xhr, status, error) {
+            console.error("Error loading polling centers:", error);
+            alert("Error loading polling centers. Please try again.");
+            $("#polling_center")
+              .html('<option value="">Select Polling Center</option>')
+              .prop("disabled", true);
+          });
+      } else {
+        $("#polling_center, #polling_station")
+          .html('<option value="">Select...</option>')
+          .prop("disabled", true);
+      }
+    });
+
+    $("#polling_center").change(function () {
+      const pollingCenterId = $(this).val();
+      console.log("Polling center selected:", pollingCenterId);
+      if (pollingCenterId) {
+        $.get("{% url 'voting:load_polling_stations' %}", {
+          polling_center: pollingCenterId,
+        })
+          .done(function (data) {
+            console.log("Polling stations received:", data);
+            let options = '<option value="">Select Polling Station</option>';
+            if (data && data.length > 0) {
+              data.forEach(function (item) {
+                options += `<option value="${item.id}">${item.name}</option>`;
+              });
+            } else {
+              options += '<option value="">No stations available</option>';
+            }
+            $("#polling_station").html(options).prop("disabled", false);
+          })
+          .fail(function (xhr, status, error) {
+            console.error("Error loading polling stations:", error);
+            console.error("Response text:", xhr.responseText);
+            alert("Error loading polling stations. Please try again.");
+            $("#polling_station")
+              .html('<option value="">Select Polling Station</option>')
+              .prop("disabled", true);
+          });
+      } else {
+        $("#polling_station")
+          .html('<option value="">Select Polling Station</option>')
+          .prop("disabled", true);
+      }
+    });
+  });
+</script>
+{% endblock %}
