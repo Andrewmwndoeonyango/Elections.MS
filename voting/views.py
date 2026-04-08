@@ -551,15 +551,16 @@ def load_polling_stations(request):
 
 
 @user_passes_test(is_admin_user, login_url='voting:login')
+@never_cache
 def admin_dashboard(request):
     total_voters = Voter.objects.count()
-    total_votes = Vote.objects.values('voter').distinct().count()
+    total_votes = Vote.objects.count()
     total_candidates = Candidate.objects.count()
 
     # Votes by position
     position_stats = Position.objects.annotate(
-        total_votes=Count('vote'),
-        total_candidates=Count('candidate')
+        total_votes=Count('vote', distinct=True),
+        total_candidates=Count('candidate', distinct=True)
     )
 
     # Recent votes
@@ -568,9 +569,9 @@ def admin_dashboard(request):
     ).order_by('-timestamp')[:10]
 
     # Registration trend
-    registration_trend = Voter.objects.extra(
-        select={'day': 'date(registration_date)'}
-    ).values('day').annotate(count=Count('id')).order_by('day')[:30]
+    registration_trend = Voter.objects.annotate(
+        date=TruncDate('registration_date')
+    ).values('date').annotate(count=Count('id')).order_by('date')[:30]
 
     context = {
         'total_voters': total_voters,

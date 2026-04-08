@@ -73,6 +73,14 @@ class PollingStationAdmin(RemoveButtonAdminMixin, admin.ModelAdmin):
     search_fields = ('name', 'code', 'center__name')
     readonly_fields = ('registered_voters',)
     actions = ('delete_selected',)
+    list_select_related = (
+        'center',
+        'center__ward',
+        'center__ward__constituency',
+        'center__ward__constituency__county',
+    )
+    list_per_page = 50
+    show_full_result_count = False
 
 
 class PositionAdmin(RemoveButtonAdminMixin, admin.ModelAdmin):
@@ -82,41 +90,109 @@ class PositionAdmin(RemoveButtonAdminMixin, admin.ModelAdmin):
 
 
 class CandidateAdmin(RemoveButtonAdminMixin, admin.ModelAdmin):
+    class CandidateAdminForm(forms.ModelForm):
+        county = forms.ModelChoiceField(
+            queryset=County.objects.order_by('name'),
+            required=False
+        )
+        constituency = forms.ModelChoiceField(
+            queryset=Constituency.objects.select_related(
+                'county').order_by('county__name', 'name'),
+            required=False
+        )
+        ward = forms.ModelChoiceField(
+            queryset=Ward.objects.select_related(
+                'constituency', 'constituency__county'
+            ).order_by('constituency__county__name', 'constituency__name', 'name'),
+            required=False
+        )
+
+        class Meta:
+            model = Candidate
+            fields = '__all__'
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+            county_id = self.data.get('county') or getattr(
+                getattr(self.instance, 'county', None), 'id', None)
+            constituency_id = self.data.get('constituency') or getattr(
+                getattr(self.instance, 'constituency', None), 'id', None)
+
+            if county_id:
+                self.fields['constituency'].queryset = Constituency.objects.filter(
+                    county_id=county_id
+                ).order_by('name')
+
+            if constituency_id:
+                self.fields['ward'].queryset = Ward.objects.filter(
+                    constituency_id=constituency_id
+                ).order_by('name')
+
+        def clean(self):
+            cleaned_data = super().clean()
+            position = cleaned_data.get('position')
+            county = cleaned_data.get('county')
+            constituency = cleaned_data.get('constituency')
+            ward = cleaned_data.get('ward')
+
+            if constituency and county and constituency.county_id != county.id:
+                raise ValidationError(
+                    'Selected constituency does not belong to the selected county.')
+
+            if ward and constituency and ward.constituency_id != constituency.id:
+                raise ValidationError(
+                    'Selected ward does not belong to the selected constituency.')
+
+            if not position:
+                return cleaned_data
+
+            if position.name in ['GOVERNOR', 'SENATOR', 'WOMEN_REP'] and not county:
+                raise ValidationError(
+                    'County is required for Governor, Senator, and Women Representative candidates.')
+
+            if position.name == 'MP':
+                if not county:
+                    raise ValidationError(
+                        'County is required for MP candidates.')
+                if not constituency:
+                    raise ValidationError(
+                        'Constituency is required for MP candidates.')
+
+            if position.name == 'MCA':
+                if not county:
+                    raise ValidationError(
+                        'County is required for MCA candidates.')
+                if not constituency:
+                    raise ValidationError(
+                        'Constituency is required for MCA candidates.')
+                if not ward:
+                    raise ValidationError(
+                        'Ward is required for MCA candidates.')
+
+            return cleaned_data
+
+    form = CandidateAdminForm
     list_display = ('first_name', 'last_name',
                     'id_number', 'party', 'position', 'remove_button')
     list_filter = ('party', 'position', 'county', 'constituency', 'ward')
     search_fields = ('first_name', 'last_name', 'id_number')
-    readonly_fields = ('constituency', 'ward')
     actions = ('delete_selected',)
-
-    def get_readonly_fields(self, request, obj=None):
-        if obj:  # editing an existing object
-            if obj.position.name == 'PRESIDENT':
-                return self.readonly_fields + ('county', 'constituency', 'ward')
-            elif obj.position.name in ['GOVERNOR', 'SENATOR', 'WOMEN_REP']:
-                return self.readonly_fields + ('constituency', 'ward')
-            elif obj.position.name == 'MP':
-                return self.readonly_fields + ('ward',)
-        return self.readonly_fields
 
 
 class VoterAdmin(RemoveButtonAdminMixin, admin.ModelAdmin):
     class VoterAdminForm(forms.ModelForm):
         constituency = forms.ModelChoiceField(
-            queryset=Constituency.objects.select_related(
-                'county').order_by('county__name', 'name')
+            queryset=Constituency.objects.none()
         )
         ward = forms.ModelChoiceField(
-            queryset=Ward.objects.select_related('constituency', 'constituency__county').order_by(
-                'constituency__county__name', 'constituency__name', 'name')
+            queryset=Ward.objects.none()
         )
         polling_center = forms.ModelChoiceField(
-            queryset=PollingCenter.objects.select_related('ward', 'ward__constituency', 'ward__constituency__county').order_by(
-                'ward__constituency__county__name', 'ward__constituency__name', 'ward__name', 'name')
+            queryset=PollingCenter.objects.none()
         )
         polling_station = forms.ModelChoiceField(
-            queryset=PollingStation.objects.select_related('center', 'center__ward', 'center__ward__constituency', 'center__ward__constituency__county').order_by(
-                'center__ward__constituency__county__name', 'center__ward__constituency__name', 'center__ward__name', 'center__name', 'name')
+            queryset=PollingStation.objects.none()
         )
 
         class Meta:
@@ -190,6 +266,26 @@ class VoterAdmin(RemoveButtonAdminMixin, admin.ModelAdmin):
                      'id_number', 'phone_number')
     readonly_fields = ('registration_date',)
     actions = ('delete_selected',)
+    list_select_related = (
+        'user',
+        'county',
+        'constituency',
+        'ward',
+        'polling_center',
+        'polling_station',
+    )
+    list_per_page = 50
+    show_full_result_count = False
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related(
+            'user',
+            'county',
+            'constituency',
+            'ward',
+            'polling_center',
+            'polling_station',
+        )
 
     def get_readonly_fields(self, request, obj=None):
         if obj:
